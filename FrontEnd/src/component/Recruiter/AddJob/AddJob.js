@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from "react";
 
 import {
   Grid,
@@ -11,34 +11,36 @@ import {
   Select,
   MenuItem,
   InputLabel,
-} from '@material-ui/core';
+} from "@material-ui/core";
 
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import axios from 'axios';
+import axios from "axios";
 
-import Navbar from '../../Navbar';
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
+import { useNavigate, Link } from "react-router-dom";
+
+import Navbar from "../../Navbar";
 
 // makeStyles use for CSS
 
 const useStyles = makeStyles(() => ({
   body: {
-    padding: '60px 60px',
-    margin: '125px 350px',
+    padding: "60px 60px",
+    margin: "125px 350px",
   },
   inputBox: {
-    width: '300px',
-    margin: '-12px',
+    width: "300px",
+    margin: "-12px",
   },
   submitButton: {
-    width: '300px',
-    margin: '0px 15px',
-    backgroundColor: '#034f84',
-    color: 'white',
+    width: "300px",
+    margin: "0px 15px",
+    backgroundColor: "#034f84",
+    color: "white",
   },
   LinkColor: {
-    textDecoration: 'none',
-    color: 'white',
+    textDecoration: "none",
+    color: "white",
   },
 }));
 
@@ -73,20 +75,85 @@ const AddJob = (props) => {
   // ];
 
   const [jobDetail, setjobDetail] = useState({
-    title: '',
-    skill: '',
-    jobType: '',
+    title: "",
+    skill: "",
+    jobType: "",
     salary: 0,
     position: 0,
   });
 
-  const submitHandler = () => {
+  const jobs = useSelector((state) => state);
+  console.log(jobs);
+  
+  const dispatch = useDispatch();
+
+  const history = useNavigate();
+
+  const submitHandler = (e) => {
+    e.preventDefault();
     console.log(jobDetail);
+
+    // const checkTitle = jobs.find((job) => job.title === title && title);
+
+    // const checkSkill = jobs.find((job) => job.skill === skill && skill);
+
+    // const checkjobType = jobs.find((job) => job.jobType === jobType && jobType);
+
+    // const checkSalary = jobs.find((job) => job.salary === salary && salary);
+
+    // const checkPosition = jobs.find(
+    //   (job) => job.position === position && position
+    // );
+
+     if (
+       !jobDetail.title ||
+       !jobDetail.skill ||
+       !jobDetail.jobType ||
+       !jobDetail.salary ||
+       !jobDetail.position
+     ) {
+       return toast.warning("Please fill all details");
+     }
+
+     const data = {
+       id: jobs[jobs.length - 1].id + 1,
+       ...jobDetail
+      //  jobDetail.title,
+      //  jobDetail.skill,
+      //  jobDetail.jobType,
+      //  jobDetail.position,
+      //  jobDetail.salary,
+     };
+     console.log(data)
+     
+    dispatch({ type: "ADD_JOB", payload: data });
+    //  toast.success("Added");
+     history("/myjob");
+
+    //  if (checkTitle) {
+    //    return toast.error("Title already exits");
+    //  }
+
+    //  if (checkSkill) {
+    //    return toast.error("Skill already exits");
+    //  }
+
+    //   if (checkjobType) {
+    //     return toast.error("Job Type already exits");
+    //   }
+
+    //   if (checkSalary) {
+    //     return toast.error("Salary already exits");
+    //   }
+
+    //    if (checkPosition) {
+    //      return toast.error("Position already exits");
+    //    }
 
     // console.log(e.target.value);
     // setJobType();
 
-    const url = 'http://localhost:5000/recruiter/addjob';
+    const url = "http://localhost:5000/recruiter/addjob";
 
     axios
       .post(url, {
@@ -129,7 +196,7 @@ const AddJob = (props) => {
             className={classes.inputBox}
             value={jobDetail.title}
             onChange={(event) => {
-              inputHandler('title', event.target.value);
+              inputHandler("title", event.target.value);
             }}
           />
         </Grid>
@@ -142,7 +209,7 @@ const AddJob = (props) => {
             className={classes.inputBox}
             value={jobDetail.skill}
             onChange={(event) => {
-              inputHandler('skill', event.target.value);
+              inputHandler("skill", event.target.value);
             }}
           />
         </Grid>
@@ -154,7 +221,7 @@ const AddJob = (props) => {
               id="jobtype"
               value={jobDetail.jobType}
               onChange={(event) => {
-                inputHandler('jobType', event.target.value);
+                inputHandler("jobType", event.target.value);
               }}
             >
               <MenuItem disabled value="">
@@ -174,7 +241,7 @@ const AddJob = (props) => {
             className={classes.inputBox}
             value={jobDetail.salary}
             onChange={(event) => {
-              inputHandler('salary', event.target.value);
+              inputHandler("salary", event.target.value);
             }}
           />
         </Grid>
@@ -187,7 +254,7 @@ const AddJob = (props) => {
             className={classes.inputBox}
             value={jobDetail.position}
             onChange={(event) => {
-              inputHandler('position', event.target.value);
+              inputHandler("position", event.target.value);
             }}
           />
         </Grid>
