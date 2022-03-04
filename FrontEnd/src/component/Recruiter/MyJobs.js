@@ -1,6 +1,8 @@
 import React from "react";
-import AddJob from "./AddJob/AddJob";
+
 import Navbar from "../Navbar";
+import DeleteJob from "./DeleteJob";
+import EditJob from "./EditJob";
 
 import { styled } from "@mui/material/styles";
 import {
@@ -14,10 +16,15 @@ import {
   TableCell,
   TableRow,
   TableContainer,
+  DialogActions,
   TableHead,
+  useTheme,
+  useMediaQuery,
+  Dialog,
+  DialogTitle,
+  DialogContentText,
+  DialogContent,TextField 
 } from "@material-ui/core";
-
-import {Icon, DeleteIcon} from '@mui/material'
 
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
@@ -48,6 +55,7 @@ const useStyles = makeStyles(() => ({
   },
   heading: {
     marginBottom: "60px ",
+    align:"center"
   },
 }));
 
@@ -68,25 +76,58 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-const MyJobs = (props) => {
+const MyJobs = () => {
   const classes = useStyles();
 
   const jobs = useSelector((state) => state);
-
+  // const [jobs, setJobs] = React.useState([]);
+  console.log("JOBS :::", jobs)
+  
   const dispatch = useDispatch();
 
   const history = useNavigate();
 
-  const editJob = (e) => {
-    // e.preventDefault();
-    history("/editjob");
-  }
+  const deleteJob = (id) => {
+    dispatch({ type: "DELETE_JOB", payload: id });
+    console.log("Deleted!!");
+    // toast.success("Deleted")
+  };
 
-  const deleteJob = (e) => {
-    // e.preventDefault();
-    history("/deletejob");
-  }
+  const editjob = (id) => {
+    history(`/editjob/${id}`);
+    // dispatch({ type: "UPDATE_JOB", payload: id });
+    // console.log("Updated!!")
+    // toast.success("Deleted")
+  };
+  // const [open, setOpen] = React.useState({dialog:false,id:""});
+  // const theme = useTheme();
+  // const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 
+  // const handleClickOpen = (id) => {
+  //   setOpen({
+  //     ...open,
+  //     dialog: true,
+  //     id:id
+  //   });
+  // };
+
+  // const handleClose = () => {
+  //   setOpen(false);
+  // };
+
+  // const editJobHandler = (id) => {
+  //   // e.preventDefault();
+  //   history(`/editjob/${id}`);
+  // };
+
+  // const aggreDelete = (id) => {
+  //   console.log(id)
+  //   setOpen({
+  //     ...open,
+  //     dialog: false,
+  //     id:id
+  //   });
+  // }
   return (
     <>
       <Navbar />
@@ -98,8 +139,19 @@ const MyJobs = (props) => {
                 My Jobs
               </Typography>
             </div>
+            <TextField
+              id="search"
+              type="text"
+              label="Search"
+              className={classes.inputBox}
+              variant="outlined"
+            />
+          </Grid>
+          <Grid item>
+            
           </Grid>
         </Grid>
+
         <TableContainer component={Paper}>
           <Table aria-label="customized table">
             <TableHead>
@@ -118,7 +170,7 @@ const MyJobs = (props) => {
               {jobs.map((job, id) => (
                 <StyledTableRow>
                   <StyledTableCell component="th" scope="row">
-                    {id}
+                    {job.id}
                   </StyledTableCell>
                   <StyledTableCell>{job.title}</StyledTableCell>
                   <StyledTableCell>{job.skill}</StyledTableCell>
@@ -126,10 +178,17 @@ const MyJobs = (props) => {
                   <StyledTableCell>{job.position}</StyledTableCell>
                   <StyledTableCell>{job.jobType}</StyledTableCell>
                   <StyledTableCell>
-                  <Button variant="outlined" onClick={() => editJob()}>Edit</Button>
+                    <Button variant="outlined" onClick={() => editjob(job.id)}>
+                      Edit
+                    </Button>
                   </StyledTableCell>
                   <StyledTableCell>
-                  <Button variant="outlined" onClick={() => deleteJob()}>Delete</Button>
+                    <Button
+                      variant="outlined"
+                      onClick={() => deleteJob(job.id)}
+                    >
+                      Delete
+                    </Button>
                   </StyledTableCell>
                 </StyledTableRow>
               ))}
@@ -137,6 +196,30 @@ const MyJobs = (props) => {
           </Table>
         </TableContainer>
       </div>
+      {/* <Dialog
+        fullScreen={fullScreen}
+        open={open.dialog}
+        onClose={handleClose}
+        aria-labelledby="responsive-dialog-title"
+      >
+        <DialogTitle id="responsive-dialog-title">
+          {"Confirm the action"}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are You Sure You Want to Delete Data?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button autoFocus onClick={handleClose}>
+            Disagree
+          </Button>
+          <Button onClick={()=>aggreDelete(open.id)} autoFocus>
+            Agree
+          </Button>
+        </DialogActions>
+      </Dialog> */}
+      {/* </div> */}
     </>
     // <div className="container">
     //   <div className="row d-flex flex-column">

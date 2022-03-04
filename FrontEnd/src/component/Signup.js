@@ -11,11 +11,11 @@ import {
   InputLabel,
 } from '@material-ui/core';
 
-import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 import Navbar from './Navbar';
+import { useNavigate, Link } from "react-router-dom";
 
 const useStyles = makeStyles(() => ({
   body: {
@@ -40,6 +40,8 @@ const useStyles = makeStyles(() => ({
 
 const Signup = () => {
   const classes = useStyles();
+  
+  const history = useNavigate();
 
   const url = 'http://localhost:5000/users/register';
 
@@ -51,14 +53,14 @@ const Signup = () => {
     types: '',
   });
 
-  const submitHandler = async (e) => {
+  const submitHandler = (e) => {
     // try {
     //   let response = await axios.post(url, {
     //     username: user.username,
     //     email: user.email,
     //     password: user.password,
     //     cpassword: user.cpassword,
-    //     type: user.type,
+    //     types: user.types, 
     //   });
 
     //   if (response.status === 200) {
@@ -67,17 +69,24 @@ const Signup = () => {
     // } catch (e) {
     //   toast.error('Somthing went wrong');
     // }
-    console.log(user);
+    
+    // console.log(user);
+    
     axios
       .post(url, {
         username: user.username,
         email: user.email,
         password: user.password,
         cpassword: user.cpassword,
-        types: user.types,
+        types: user.types,      
       })
       .then((res) => {
-        console.log('hii' + res.user);
+        // toast.success("Registration Succesfully Completed!!")
+        console.log("Registration Succesfully Completed!", res.user);
+        history('/home');
+      }).catch((e) => {
+        // toast.error("Somthing went wrong!!")
+        console.log("Somthing went wrong!!",e)
       });
   };
 

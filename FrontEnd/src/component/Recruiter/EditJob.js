@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState ,useEffect} from "react";
 
 import {
   Grid,
@@ -17,7 +17,7 @@ import axios from "axios";
 
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link,useParams } from "react-router-dom";
 
 import Navbar from "../Navbar";
 
@@ -45,16 +45,40 @@ const useStyles = makeStyles(() => ({
 const EditJob = (props) => {
   const classes = useStyles();
 
-  const [jobDetail, setjobDetail] = useState({
-    title: "",
-    skill: "",
-    jobType: "",
-    salary: 0,
-    position: 0,
+  const { id } = useParams();
+  console.log("id:::", id)
+  
+  const jobs = useSelector((state) => state);
+  console.log("JOBS :::", jobs);
+  
+  const currentJob = jobs.find(
+    (job) => job.id === parseInt(id)
+  );
+  console.log("CURRENT JOB:::", currentJob)
+  
+  let [jobDetail, setjobDetail] = useState({
+    title: currentJob.title,
+    skill: currentJob.skill,
+    jobType: currentJob.jobType,
+    salary: currentJob.salary,
+    position:currentJob.position,
   });
 
-  const jobs = useSelector((state) => state);
-  console.log(jobs);
+  // let [jobDetail, setjobDetail] = useState({title:"",skill:"",jobType,salary,position  });
+  console.log("JOB DETAIL:::",jobDetail)
+
+  useEffect(() => {
+    console.log("SETJOBDETAIL FIRST::::",setjobDetail)
+    if (currentJob) {
+      console.log("SETJOBDETAIL ::::",setjobDetail)
+      setjobDetail({
+        ...jobDetail,
+       
+      });
+      console.log("SETJOBDETAIL ::::",setjobDetail)
+    }
+  }, [currentJob]);
+
 
   const dispatch = useDispatch();
 
@@ -65,7 +89,7 @@ const EditJob = (props) => {
     console.log(jobDetail);
 
     const data = {
-      id: jobs[jobs.length - 1].id + 1,
+      id:parseInt(id),
       ...jobDetail,
       //  jobDetail.title,
       //  jobDetail.skill,
@@ -73,25 +97,25 @@ const EditJob = (props) => {
       //  jobDetail.position,
       //  jobDetail.salary,
     };
-    console.log(data);
+    console.log("DATA:::",data);
 
     dispatch({ type: "UPDATE_JOB", payload: data });
     //  toast.success("Updated");
     history("/myjob");
 
-    // const url = "http://localhost:5000/recruiter/addjob";
+    const url = `http://localhost:5000/recruiter/job/:${currentJob.id}`;
 
-    // axios
-    //   .post(url, {
-    //     title: jobDetail.title,
-    //     skill: jobDetail.skill,
-    //     jobType: jobDetail.jobType,
-    //     salary: jobDetail.salary,
-    //     position: jobDetail.position,
-    //   })
-    //   .then((res) => {
-    //     console.log(res.jobDetail);
-    //   });
+    axios
+      .post(url, {
+        title: jobDetail.title,
+        skill: jobDetail.skill,
+        jobType: jobDetail.jobType,
+        salary: jobDetail.salary,
+        position: jobDetail.position,
+      })
+      .then((res) => {
+        console.log(res.jobDetail);
+      });
   };
 
   const inputHandler = (key, value) => {
@@ -142,7 +166,7 @@ const EditJob = (props) => {
           <FormControl fullWidth className={classes.inputBox}>
             <InputLabel>Job Type</InputLabel>
             <Select
-              id="jobtype"
+              id="jobType"
               value={jobDetail.jobType}
               onChange={(event) => {
                 inputHandler("jobType", event.target.value);

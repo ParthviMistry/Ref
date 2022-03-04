@@ -9,15 +9,18 @@ import AddJob from './component/Recruiter/AddJob/AddJob';
 import MyJobs from './component/Recruiter/MyJobs';
 import EditJob from './component/Recruiter/EditJob';
 import DeleteJob from './component/Recruiter/DeleteJob';
+import Home from './component/Home';
+import ViewProflie from './component/Recruiter/ViewProflie';
 
 function App() {
   const user = localStorage.getItem('token');
   return (
     <>
-      <ToastContainer />
       <Routes>
         {/* {user && <Route path="/" exact element={<Navbar />} />} */}
         <Route path="/" element={<Navbar />} exact />
+
+        <Route path="/home" element={<Home />} exact />
 
         <Route path="/login" element={<Login />} exact />
 
@@ -29,10 +32,14 @@ function App() {
 
         <Route path="/myjob" element={<MyJobs />} exact />
 
-        <Route path="/editjob" element={<EditJob />} exact />
+        <Route path="/editjob/:id" element={<EditJob />} exact />
 
-        <Route path="/deletejob" element={<DeleteJob/>} exact />
+        <Route path="/deletejob" element={<DeleteJob />} exact />
+
+        <Route path="/viewprofile" element={<ViewProflie />} exact />
+        
       </Routes>
+      <ToastContainer />
     </>
   );
 }

@@ -1,6 +1,14 @@
 const express = require('express');
 const app = express();
 
+const cors = require('cors');
+const corsOptions = {
+  origin: 'http://localhost:3000',
+  credentials: true, //access-control-allow-credentials:true
+  optionSuccessStatus: 200,
+};
+app.use(cors());
+
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 // const dotenv = require('dotenv');
@@ -25,13 +33,6 @@ app.use(auth);
 app.use(notFound);
 app.use(errorHandler);
 
-// const cors = require('cors');
-// const corsOptions = {
-//   origin: 'http://localhost:3000',
-//   credentials: true, //access-control-allow-credentials:true
-//   optionSuccessStatus: 200,
-// };
-// app.use(cors());
 
 const myFunction = async () => {
   const token = jwt.sign({ _id: 'abc123' }, 'JobPortal', {

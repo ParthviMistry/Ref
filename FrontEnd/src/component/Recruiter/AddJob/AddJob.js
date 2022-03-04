@@ -25,16 +25,17 @@ import Navbar from "../../Navbar";
 
 const useStyles = makeStyles(() => ({
   body: {
-    padding: "60px 60px",
-    margin: "125px 350px",
+    padding: "60px",
+    margin: "125px 600px",
   },
   inputBox: {
-    width: "300px",
+    width: "450px",
     margin: "-12px",
   },
   submitButton: {
-    width: "300px",
-    margin: "0px 15px",
+    width: "200px",
+    margin: "30px",
+    marginBottom: "0px",
     backgroundColor: "#034f84",
     color: "white",
   },
@@ -46,6 +47,13 @@ const useStyles = makeStyles(() => ({
 
 const AddJob = (props) => {
   const classes = useStyles();
+
+  const dispatch = useDispatch();
+
+  const history = useNavigate();
+
+  const jobs = useSelector((state) => state);
+  console.log("JOBS :::", jobs);
 
   // console.log(props.title);
 
@@ -82,16 +90,8 @@ const AddJob = (props) => {
     position: 0,
   });
 
-  const jobs = useSelector((state) => state);
-  console.log(jobs);
-  
-  const dispatch = useDispatch();
-
-  const history = useNavigate();
-
   const submitHandler = (e) => {
-    e.preventDefault();
-    console.log(jobDetail);
+    console.log("JOB DETAIL :::", jobDetail);
 
     // const checkTitle = jobs.find((job) => job.title === title && title);
 
@@ -105,55 +105,39 @@ const AddJob = (props) => {
     //   (job) => job.position === position && position
     // );
 
-     if (
-       !jobDetail.title ||
-       !jobDetail.skill ||
-       !jobDetail.jobType ||
-       !jobDetail.salary ||
-       !jobDetail.position
-     ) {
-       return toast.warning("Please fill all details");
-     }
+    if (
+      !jobDetail.title ||
+      !jobDetail.skill ||
+      !jobDetail.jobType ||
+      !jobDetail.salary ||
+      !jobDetail.position
+    ) {
+      //  toast.warning("Please fill all details");
+      console.log("Please fill all details");
+      history("/addjob");
+    }
 
-     const data = {
-       id: jobs[jobs.length - 1].id + 1,
-       ...jobDetail
+    const data = {
+      id: jobs[jobs.length - 1].id + 1,
+      ...jobDetail,
       //  jobDetail.title,
       //  jobDetail.skill,
       //  jobDetail.jobType,
       //  jobDetail.position,
       //  jobDetail.salary,
-     };
-     console.log(data)
-     
-    dispatch({ type: "ADD_JOB", payload: data });
+    };
+    console.log("DATA :::",data);
+
     //  toast.success("Added");
-     history("/myjob");
-
-    //  if (checkTitle) {
-    //    return toast.error("Title already exits");
-    //  }
-
-    //  if (checkSkill) {
-    //    return toast.error("Skill already exits");
-    //  }
-
-    //   if (checkjobType) {
-    //     return toast.error("Job Type already exits");
-    //   }
-
-    //   if (checkSalary) {
-    //     return toast.error("Salary already exits");
-    //   }
-
-    //    if (checkPosition) {
-    //      return toast.error("Position already exits");
-    //    }
-
+    //  history("/myjob");
     // console.log(e.target.value);
     // setJobType();
 
-    const url = "http://localhost:5000/recruiter/addjob";
+    dispatch({ type: "ADD_JOB", payload: data });
+    console.log("Dispatch Job Added Successfully!!");
+    history("/myjob");
+    
+    const url = "http://localhost:5000/recruiter/job";
 
     axios
       .post(url, {
@@ -165,6 +149,12 @@ const AddJob = (props) => {
       })
       .then((res) => {
         console.log(res.jobDetail);
+        // console.log("Job Added Succesfully!!", res.jobDetail);
+        // history('/myjob')
+      })
+      .catch((e) => {
+        // toast.error("Somthing went wrong!!")
+        console.log(e);
       });
   };
 
@@ -218,7 +208,7 @@ const AddJob = (props) => {
           <FormControl fullWidth className={classes.inputBox}>
             <InputLabel>Job Type</InputLabel>
             <Select
-              id="jobtype"
+              id="jobType"
               value={jobDetail.jobType}
               onChange={(event) => {
                 inputHandler("jobType", event.target.value);
@@ -249,7 +239,7 @@ const AddJob = (props) => {
         <Grid item>
           <TextField
             id="position"
-            type="position"
+            type="number"
             label="Position"
             className={classes.inputBox}
             value={jobDetail.position}
