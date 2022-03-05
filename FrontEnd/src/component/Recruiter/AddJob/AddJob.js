@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import {
   Grid,
@@ -13,11 +13,12 @@ import {
   InputLabel,
 } from "@material-ui/core";
 
-import axios from "axios";
-
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector, connect } from "react-redux";
 import { toast } from "react-toastify";
 import { useNavigate, Link } from "react-router-dom";
+
+import { bindActionCreators } from "redux";
+import { addAllJobs } from "../../../store/action/jobAction";
 
 import Navbar from "../../Navbar";
 
@@ -47,13 +48,10 @@ const useStyles = makeStyles(() => ({
 
 const AddJob = (props) => {
   const classes = useStyles();
-
-  const dispatch = useDispatch();
-
   const history = useNavigate();
 
-  const jobs = useSelector((state) => state);
-  console.log("JOBS :::", jobs);
+  // const jobs = useSelector((state) => state);
+  // console.log("JOBS :::", jobs);
 
   // console.log(props.title);
 
@@ -90,7 +88,7 @@ const AddJob = (props) => {
     position: 0,
   });
 
-  const submitHandler = (e) => {
+  const submitHandler = async (e) => {
     console.log("JOB DETAIL :::", jobDetail);
 
     // const checkTitle = jobs.find((job) => job.title === title && title);
@@ -118,7 +116,7 @@ const AddJob = (props) => {
     }
 
     const data = {
-      id: jobs[jobs.length - 1].id + 1,
+      // id: jobs[jobs.length - 1].id + 1,
       ...jobDetail,
       //  jobDetail.title,
       //  jobDetail.skill,
@@ -126,36 +124,38 @@ const AddJob = (props) => {
       //  jobDetail.position,
       //  jobDetail.salary,
     };
-    console.log("DATA :::",data);
+    console.log("DATA :::", data);
+
+    await props?.addAllJobs(data);
 
     //  toast.success("Added");
     //  history("/myjob");
     // console.log(e.target.value);
     // setJobType();
 
-    dispatch({ type: "ADD_JOB", payload: data });
-    console.log("Dispatch Job Added Successfully!!");
-    history("/myjob");
-    
-    const url = "http://localhost:5000/recruiter/job";
+    // dispatch({ type: "ADD_JOB", payload: data });
+    // console.log("Dispatch Job Added Successfully!!");
+    // history("/myjob");
 
-    axios
-      .post(url, {
-        title: jobDetail.title,
-        skill: jobDetail.skill,
-        jobType: jobDetail.jobType,
-        salary: jobDetail.salary,
-        position: jobDetail.position,
-      })
-      .then((res) => {
-        console.log(res.jobDetail);
-        // console.log("Job Added Succesfully!!", res.jobDetail);
-        // history('/myjob')
-      })
-      .catch((e) => {
-        // toast.error("Somthing went wrong!!")
-        console.log(e);
-      });
+    // const url = "http://localhost:5000/recruiter/job";
+
+    // axios
+    //   .post(url, {
+    //     title: jobDetail.title,
+    //     skill: jobDetail.skill,
+    //     jobType: jobDetail.jobType,
+    //     salary: jobDetail.salary,
+    //     position: jobDetail.position,
+    //   })
+    //   .then((res) => {
+    //     console.log(res.jobDetail);
+    //     // console.log("Job Added Succesfully!!", res.jobDetail);
+    //     // history('/myjob')
+    //   })
+    //   .catch((e) => {
+    //     // toast.error("Somthing went wrong!!")
+    //     console.log(e);
+    //   });
   };
 
   const inputHandler = (key, value) => {
@@ -167,104 +167,118 @@ const AddJob = (props) => {
   };
 
   return (
-    // Paper use as container , elevation - for shadow
-    <Paper elevation={3} className={classes.body}>
-      <Navbar />
-      <Grid container direction="column" spacing={4} alignItems="center">
-        <Grid item>
-          {/*  Typography use for size or different heading tag */}
-          <Typography variant="h4" component="h2">
-            Add Jobs
-          </Typography>
-        </Grid>
+    <>
+      {/* {console.log(props?.job?.data)} */}
+      {/* // Paper use as container , elevation - for shadow */}(
+      <Paper elevation={3} className={classes.body}>
+        <Navbar />
+        <Grid container direction="column" spacing={4} alignItems="center">
+          <Grid item>
+            {/*  Typography use for size or different heading tag */}
+            <Typography variant="h4" component="h2">
+              Add Jobs
+            </Typography>
+          </Grid>
 
-        <Grid item>
-          <TextField
-            id="title"
-            type="text"
-            label="Title"
-            className={classes.inputBox}
-            value={jobDetail.title}
-            onChange={(event) => {
-              inputHandler("title", event.target.value);
-            }}
-          />
-        </Grid>
-
-        <Grid item>
-          <TextField
-            id="skill"
-            type="text"
-            label="Skill"
-            className={classes.inputBox}
-            value={jobDetail.skill}
-            onChange={(event) => {
-              inputHandler("skill", event.target.value);
-            }}
-          />
-        </Grid>
-
-        <Grid item>
-          <FormControl fullWidth className={classes.inputBox}>
-            <InputLabel>Job Type</InputLabel>
-            <Select
-              id="jobType"
-              value={jobDetail.jobType}
+          <Grid item>
+            <TextField
+              id="title"
+              type="text"
+              label="Title"
+              className={classes.inputBox}
+              value={jobDetail.title}
               onChange={(event) => {
-                inputHandler("jobType", event.target.value);
+                inputHandler("title", event.target.value);
               }}
-            >
-              <MenuItem disabled value="">
-                Select
-              </MenuItem>
-              <MenuItem value="Full Time">Full Time</MenuItem>
-              <MenuItem value="Part Time">Part Time</MenuItem>
-            </Select>
-          </FormControl>
-        </Grid>
+            />
+          </Grid>
 
-        <Grid item>
-          <TextField
-            id="salary"
-            type="text"
-            label="Salary"
-            className={classes.inputBox}
-            value={jobDetail.salary}
-            onChange={(event) => {
-              inputHandler("salary", event.target.value);
-            }}
-          />
-        </Grid>
+          <Grid item>
+            <TextField
+              id="skill"
+              type="text"
+              label="Skill"
+              className={classes.inputBox}
+              value={jobDetail.skill}
+              onChange={(event) => {
+                inputHandler("skill", event.target.value);
+              }}
+            />
+          </Grid>
 
-        <Grid item>
-          <TextField
-            id="position"
-            type="number"
-            label="Position"
-            className={classes.inputBox}
-            value={jobDetail.position}
-            onChange={(event) => {
-              inputHandler("position", event.target.value);
-            }}
-          />
-        </Grid>
+          <Grid item>
+            <FormControl fullWidth className={classes.inputBox}>
+              <InputLabel>Job Type</InputLabel>
+              <Select
+                id="jobType"
+                value={jobDetail.jobType}
+                onChange={(event) => {
+                  inputHandler("jobType", event.target.value);
+                }}
+              >
+                <MenuItem disabled value="">
+                  Select
+                </MenuItem>
+                <MenuItem value="full time">Full Time</MenuItem>
+                <MenuItem value="part time">Part Time</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
 
-        <Grid item>
-          <Link to="/myjob" className={classes.LinkColor}>
-            <Button
-              id="btnSubmit"
-              variant="contained"
-              type="submit"
-              className={classes.submitButton}
-              onClick={submitHandler}
-            >
-              Submit
-            </Button>
-          </Link>
+          <Grid item>
+            <TextField
+              id="salary"
+              type="text"
+              label="Salary"
+              className={classes.inputBox}
+              value={jobDetail.salary}
+              onChange={(event) => {
+                inputHandler("salary", event.target.value);
+              }}
+            />
+          </Grid>
+
+          <Grid item>
+            <TextField
+              id="position"
+              type="number"
+              label="Position"
+              className={classes.inputBox}
+              value={jobDetail.position}
+              onChange={(event) => {
+                inputHandler("position", event.target.value);
+              }}
+            />
+          </Grid>
+
+          <Grid item>
+            <Link to="/myjob" className={classes.LinkColor}>
+              <Button
+                id="btnSubmit"
+                variant="contained"
+                type="submit"
+                className={classes.submitButton}
+                onClick={submitHandler}
+              >
+                Submit
+              </Button>
+            </Link>
+          </Grid>
         </Grid>
-      </Grid>
-    </Paper>
+      </Paper>
+      )
+    </>
   );
 };
 
-export default AddJob;
+// export default AddJob;
+
+const mapDispatchToProps = (dispatch) => {
+  return bindActionCreators(
+    {
+      addAllJobs: (data) => addAllJobs(data),
+    },
+    dispatch
+  );
+};
+export default connect(null, mapDispatchToProps)(AddJob);

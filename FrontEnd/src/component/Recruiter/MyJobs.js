@@ -1,9 +1,10 @@
-import React from "react";
-
+import React, { useEffect, useState } from "react";
+import { bindActionCreators } from "redux";
+import { connect } from "react-redux";
 import Navbar from "../Navbar";
 import DeleteJob from "./DeleteJob";
 import EditJob from "./EditJob";
-
+import { getAllJobs,deleteJobs,getJobsById } from "../../store/action/jobAction";
 import { styled } from "@mui/material/styles";
 import {
   Grid,
@@ -23,7 +24,8 @@ import {
   Dialog,
   DialogTitle,
   DialogContentText,
-  DialogContent,TextField 
+  DialogContent,
+  TextField,
 } from "@material-ui/core";
 
 import { useSelector, useDispatch } from "react-redux";
@@ -55,7 +57,7 @@ const useStyles = makeStyles(() => ({
   },
   heading: {
     marginBottom: "60px ",
-    align:"center"
+    align: "center",
   },
 }));
 
@@ -76,25 +78,27 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-const MyJobs = () => {
+const MyJobs = (props) => {
   const classes = useStyles();
-
-  const jobs = useSelector((state) => state);
+  // const jobs = useSelector((state) => state);
   // const [jobs, setJobs] = React.useState([]);
-  console.log("JOBS :::", jobs)
-  
+  // console.log("JOBS :::", jobs)
+
   const dispatch = useDispatch();
 
-  const history = useNavigate();
+  let navigate = useNavigate();
 
-  const deleteJob = (id) => {
-    dispatch({ type: "DELETE_JOB", payload: id });
-    console.log("Deleted!!");
+  const deleteHandler = async (id) => {
+    // dispatch({ type: "DELETE_JOB", payload: id });
+    // console.log("Deleted!!");
     // toast.success("Deleted")
+    await this.props?.deleteJobs();
   };
 
-  const editjob = (id) => {
-    history(`/editjob/${id}`);
+  const editHandler = async (id) => {
+    // history(`/editjob/${job._id}`);
+console.log(id)
+  
     // dispatch({ type: "UPDATE_JOB", payload: id });
     // console.log("Updated!!")
     // toast.success("Deleted")
@@ -128,8 +132,17 @@ const MyJobs = () => {
   //     id:id
   //   });
   // }
+  const getJobs = async () => {
+    await props?.getAllJobs();
+  };
+  useEffect(() => {
+    getJobs();
+  }, []);
+
+ 
   return (
     <>
+      {console.log(props?.job?.data)}
       <Navbar />
       <div className={classes.tableBody}>
         <Grid container direction="column" spacing={4} alignItems="center">
@@ -147,9 +160,7 @@ const MyJobs = () => {
               variant="outlined"
             />
           </Grid>
-          <Grid item>
-            
-          </Grid>
+          <Grid item></Grid>
         </Grid>
 
         <TableContainer component={Paper}>
@@ -167,31 +178,38 @@ const MyJobs = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {jobs.map((job, id) => (
-                <StyledTableRow>
-                  <StyledTableCell component="th" scope="row">
-                    {job.id}
-                  </StyledTableCell>
-                  <StyledTableCell>{job.title}</StyledTableCell>
-                  <StyledTableCell>{job.skill}</StyledTableCell>
-                  <StyledTableCell>{job.salary}</StyledTableCell>
-                  <StyledTableCell>{job.position}</StyledTableCell>
-                  <StyledTableCell>{job.jobType}</StyledTableCell>
-                  <StyledTableCell>
-                    <Button variant="outlined" onClick={() => editjob(job.id)}>
-                      Edit
-                    </Button>
-                  </StyledTableCell>
-                  <StyledTableCell>
-                    <Button
-                      variant="outlined"
-                      onClick={() => deleteJob(job.id)}
-                    >
-                      Delete
-                    </Button>
-                  </StyledTableCell>
-                </StyledTableRow>
-              ))}
+              {props?.job?.data?.getJob?.length &&
+                props?.job?.data?.getJob?.map((job, id) => (
+                  <StyledTableRow>
+                    <StyledTableCell component="th" scope="row">
+                      {job._id}
+                    </StyledTableCell>
+                    <StyledTableCell>{job.title}</StyledTableCell>
+                    <StyledTableCell>{job.skill}</StyledTableCell>
+                    <StyledTableCell>{job.salary}</StyledTableCell>
+                    <StyledTableCell>{job.position}</StyledTableCell>
+                    <StyledTableCell>{job.jobType}</StyledTableCell>
+                    <StyledTableCell>
+                      <Button
+                         component={Link}
+                        to={`/editjob/${job._id}`}
+                        variant="outlined"
+                        // onClick={() => {navigate(`/editjob/${job._id}`)}}
+      
+                      >
+                        Edit
+                      </Button>
+                    </StyledTableCell>
+                    <StyledTableCell>
+                      <Button
+                        variant="outlined"
+                        onClick={() => deleteHandler(job.id)}
+                      >
+                        Delete
+                      </Button>
+                    </StyledTableCell>
+                  </StyledTableRow>
+                ))}
             </TableBody>
           </Table>
         </TableContainer>
@@ -280,5 +298,20 @@ const MyJobs = () => {
     // </div>
   );
 };
-
-export default MyJobs;
+const mapStateToProps = (state) => {
+  return {
+    job: state.jobs.alljob,
+    
+  };
+};
+const mapDispatchToProps = (dispatch) => {
+  return bindActionCreators(
+    {
+      getAllJobs: () => getAllJobs(),
+      getJobsById: () => getJobsById()
+      // deleteJobs: () => deleteJobs()
+    },
+    dispatch
+  );
+};
+export default connect(mapStateToProps, mapDispatchToProps)(MyJobs);

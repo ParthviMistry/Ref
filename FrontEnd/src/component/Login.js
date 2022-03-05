@@ -138,7 +138,7 @@ const Login = (props) => {
         console.log(res);
       })
       .catch((e) => {
-        console.log('Erroe' + e);
+        console.log('Error' + e);
       });
   };
   // const handleSubmit = (e) => {

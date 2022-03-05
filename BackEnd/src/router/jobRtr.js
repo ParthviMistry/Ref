@@ -31,6 +31,24 @@ routerJob.get("/recruiter/job", async (req, res) => {
   }
 });
 
+// -- Read Job By Id-- //
+
+routerJob.get("/recruiter/job/:id", async (req, res) => {
+  try {
+    const _id = req.params.id;
+    // console.log(_id);
+    const getJobByid = await jobModel.findById({_id});
+    // console.log(getJobByid);
+    if (!getJobByid) {
+      return res.status(404).send("Job Not Found");
+    } else {
+      res.status(201).send(getJobByid);
+    }
+  } catch (e) {
+    res.status(400).send("Error" + e);
+  }
+});
+
 // -- Read Job By title-- //
 
 routerJob.get("/recruiter/job/:title", async (req, res) => {
@@ -51,14 +69,14 @@ routerJob.get("/recruiter/job/:title", async (req, res) => {
 
 // -- Update Jobs-- //
 
-routerJob.put("/recruiter/job/:id", async (req, res) => {
+routerJob.patch("/recruiter/job/:id", async (req, res) => {
   try {
     const _id = req.params.id;
-    // console.log(_id);
+    console.log(_id);
     const updateJob = await jobModel.findByIdAndUpdate(_id, req.body, {
       new: true,
     });
-    // console.log(updateJob);
+    console.log(updateJob);
     if (!updateJob) {
       return res.status(404).send("User Not Found");
     } else {

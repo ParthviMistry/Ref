@@ -27,6 +27,7 @@ const jobReducer = (state = initialState, action) => {
       const selectstate = state.map((job) =>
         job === action.payload ? null : job
       );
+      console.log(selectstate)
       state = selectstate;
       return state;
       break;

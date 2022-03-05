@@ -71,7 +71,12 @@ const Signup = () => {
     // }
     
     // console.log(user);
-    
+    localStorage.setItem('Usename', JSON.stringify(user.username));
+    localStorage.setItem('Email', JSON.stringify(user.email));
+    localStorage.setItem('Password', JSON.stringify(user.password));
+    localStorage.setItem('CPassword', JSON.stringify(user.cpassword));
+    localStorage.setItem('Types', JSON.stringify(user.types));
+
     axios
       .post(url, {
         username: user.username,
