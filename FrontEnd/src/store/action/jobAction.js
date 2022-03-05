@@ -67,10 +67,10 @@ export function updateJobs({ title, skill, jobType, salary, position, id }) {
   };
 }
 
-export function deleteJobs() {
+export function deleteJobs(id) {
   return async (dispatch) => {
     try {
-      let res = await axios.delete("http://localhost:5000/recruiter/job/:id");
+      let res = await axios.delete(`http://localhost:5000/recruiter/job/${id}`);
       //   console.log(res);
       return dispatch({
         type: "DELETE_JOB",

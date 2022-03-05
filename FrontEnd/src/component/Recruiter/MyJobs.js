@@ -4,7 +4,11 @@ import { connect } from "react-redux";
 import Navbar from "../Navbar";
 import DeleteJob from "./DeleteJob";
 import EditJob from "./EditJob";
-import { getAllJobs,deleteJobs,getJobsById } from "../../store/action/jobAction";
+import {
+  getAllJobs,
+  deleteJobs,
+  getJobsById,
+} from "../../store/action/jobAction";
 import { styled } from "@mui/material/styles";
 import {
   Grid,
@@ -89,49 +93,53 @@ const MyJobs = (props) => {
   let navigate = useNavigate();
 
   const deleteHandler = async (id) => {
-    // dispatch({ type: "DELETE_JOB", payload: id });
-    // console.log("Deleted!!");
-    // toast.success("Deleted")
-    await this.props?.deleteJobs();
+    // setOpen({
+    //   ...open,
+    //   dialog: true,
+    //   id:id
+    // });
+    // console.log("ID::::", id)
+    handleClickOpen(id);
+    // await props?.deleteJobs(id);
+    // getJobs()
   };
 
   const editHandler = async (id) => {
     // history(`/editjob/${job._id}`);
-console.log(id)
-  
+    console.log(id);
+
     // dispatch({ type: "UPDATE_JOB", payload: id });
     // console.log("Updated!!")
     // toast.success("Deleted")
   };
-  // const [open, setOpen] = React.useState({dialog:false,id:""});
-  // const theme = useTheme();
-  // const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const [open, setOpen] = React.useState({ dialog: false, id: "" });
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
 
-  // const handleClickOpen = (id) => {
-  //   setOpen({
-  //     ...open,
-  //     dialog: true,
-  //     id:id
-  //   });
-  // };
+  const handleClickOpen = (id) => {
+    setOpen({
+      ...open,
+      dialog: true,
+      id: id,
+    });
+    console.log("iddddd::::", id);
+  };
 
-  // const handleClose = () => {
-  //   setOpen(false);
-  // };
+  const handleClose = () => {
+    setOpen(false);
+  };
 
-  // const editJobHandler = (id) => {
-  //   // e.preventDefault();
-  //   history(`/editjob/${id}`);
-  // };
-
-  // const aggreDelete = (id) => {
-  //   console.log(id)
-  //   setOpen({
-  //     ...open,
-  //     dialog: false,
-  //     id:id
-  //   });
-  // }
+  const aggreDelete = async (id) => {
+    setOpen({
+      ...open,
+      dialog: false,
+      id: id,
+    });
+    console.log("AGREE ID::::::", id);
+    await props?.deleteJobs(id);
+    getJobs();
+    console.log("Delete Succesfully", id);
+  };
   const getJobs = async () => {
     await props?.getAllJobs();
   };
@@ -139,7 +147,6 @@ console.log(id)
     getJobs();
   }, []);
 
- 
   return (
     <>
       {console.log(props?.job?.data)}
@@ -182,7 +189,7 @@ console.log(id)
                 props?.job?.data?.getJob?.map((job, id) => (
                   <StyledTableRow>
                     <StyledTableCell component="th" scope="row">
-                      {job._id}
+                      {id + 1}
                     </StyledTableCell>
                     <StyledTableCell>{job.title}</StyledTableCell>
                     <StyledTableCell>{job.skill}</StyledTableCell>
@@ -191,11 +198,10 @@ console.log(id)
                     <StyledTableCell>{job.jobType}</StyledTableCell>
                     <StyledTableCell>
                       <Button
-                         component={Link}
+                        component={Link}
                         to={`/editjob/${job._id}`}
                         variant="outlined"
                         // onClick={() => {navigate(`/editjob/${job._id}`)}}
-      
                       >
                         Edit
                       </Button>
@@ -203,7 +209,7 @@ console.log(id)
                     <StyledTableCell>
                       <Button
                         variant="outlined"
-                        onClick={() => deleteHandler(job.id)}
+                        onClick={() => deleteHandler(job._id)}
                       >
                         Delete
                       </Button>
@@ -214,7 +220,8 @@ console.log(id)
           </Table>
         </TableContainer>
       </div>
-      {/* <Dialog
+
+      <Dialog
         fullScreen={fullScreen}
         open={open.dialog}
         onClose={handleClose}
@@ -232,84 +239,24 @@ console.log(id)
           <Button autoFocus onClick={handleClose}>
             Disagree
           </Button>
-          <Button onClick={()=>aggreDelete(open.id)} autoFocus>
+          <Button onClick={() => aggreDelete(open.id)} autoFocus>
             Agree
           </Button>
         </DialogActions>
-      </Dialog> */}
-      {/* </div> */}
+      </Dialog>
     </>
-    // <div className="container">
-    //   <div className="row d-flex flex-column">
-    //     <Link to="/add" className="btn btn-outline-dark my-5 ml-auto ">
-    //       My Job
-    //     </Link>
-    //   </div>
-    //   <div className="col-md-10 mx-auto my-4">
-    //     <table className="table table-hover">
-    //       <thead className="table-header bg-dark text-white">
-    //         <tr>
-    //           <th scope="col">Id</th>
-    //           <th scope="col">Title</th>
-    //           <th scope="col">Skill</th>
-    //           <th scope="col">Job Type</th>
-    //           <th scope="col">Salary</th>
-    //           <th scope="col">Position</th>
-    //         </tr>
-    //       </thead>
-    //       <tbody>
-    //         {jobs.map((job, id) => (
-    //           <tr key={id}>
-    //             <td>{id + 1}</td>
-    //             <td>{job.title}</td>
-    //             <td>{job.skill}</td>
-    //             <td>{job.jobType}</td>
-    //             <td>{job.salary}</td>
-    //             <td>{job.position}</td>
-    //             <td>
-    //               <Link
-    //                 to="/"
-    //                 // to={`/edit/${contact.id}`}
-    //                 className="btn btn-small btn-primary mr-2"
-    //               >
-    //                 Edit
-    //               </Link>
-    //               <button
-    //                 type="button"
-    //                 // onClick={() => deleteContact(contact.id)}
-    //                 className="btn btn-sm btn-danger"
-    //               >
-    //                 Delete
-    //               </button>
-    //             </td>
-    //             {/* <td>
-    //               <Link
-    //                 to={`/edit/${contact.id}`}
-    //                 className="btn btn-small btn-danger mr-2"
-    //               >
-    //                 Delete
-    //               </Link>
-    //             </td> */}
-    //           </tr>
-    //         ))}
-    //       </tbody>
-    //     </table>
-    //   </div>
-    // </div>
   );
 };
 const mapStateToProps = (state) => {
   return {
     job: state.jobs.alljob,
-    
   };
 };
 const mapDispatchToProps = (dispatch) => {
   return bindActionCreators(
     {
       getAllJobs: () => getAllJobs(),
-      getJobsById: () => getJobsById()
-      // deleteJobs: () => deleteJobs()
+      deleteJobs: (id) => deleteJobs(id),
     },
     dispatch
   );
