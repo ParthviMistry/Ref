@@ -1,5 +1,6 @@
-import React from "react";
-import Navbar from "../Navbar";
+import React, { useState, useEffect } from "react";
+
+import RecruiterNavbar from "./RecruiterNavbar";
 import {
   makeStyles,
   Paper,
@@ -7,8 +8,14 @@ import {
   Typography,
   ImageList,
   ImageListItem,
-  TextField,
+  TextField,Button
 } from "@material-ui/core";
+
+import { useNavigate, Link, useParams } from "react-router-dom";
+import { getProfile } from "../../store/action/jobAction";
+
+import { bindActionCreators } from "redux";
+import { connect } from "react-redux";
 
 const useStyles = makeStyles(() => ({
   body: {
@@ -31,11 +38,49 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-function ViewProflie() {
+function ViewProflie(props) {
   const classes = useStyles();
+  const { id } = useParams();
+  console.log("MY PROFILE::::" ,id)
+  
+  const [data, setData] = useState({
+    username: "",
+    email: "",
+  });
+
+  const getprofile = async (id) => {
+    await props.getProfile(id);
+  };
+
+  useEffect(() => {
+    getprofile(id);
+  }, []);
+
+  useEffect(() => {
+    console.log("useeffect call")
+    if (props?.getProfile) {
+      setData({
+        username: props?.getProfile?.data?.username,
+        email: props?.getProfile?.data?.email,
+      });
+    }
+  }, [props?.getProfile]);
+
+  const submitHandler = (id) => {
+    const data = {
+      username: data.username,
+      email: data.email,
+      id: id,
+    };
+    console.log("DATA:::", data);
+
+    // props?.updateJobs(data);
+  };
+
   return (
     <>
-      <Navbar />
+      {console.log("aaa :",data)}
+      <RecruiterNavbar />
       <Paper elevation={3} className={classes.body}>
         <Grid container direction="column" spacing={4} alignItems="center">
           <Grid item>
@@ -54,6 +99,10 @@ function ViewProflie() {
               label="Username"
               className={classes.inputBox}
               variant="outlined"
+              value={data.username}
+              onChange={(event) => {
+                setData({ ...data, username: event.target.value });
+              }}
             />
           </Grid>
           <Grid item>
@@ -63,12 +112,45 @@ function ViewProflie() {
               label="Email"
               className={classes.inputBox}
               variant="outlined"
+              value={data.email}
+              onChange={(event) => {
+                setData({ ...data, email: event.target.value });
+              }}
             />
           </Grid>
+          <Grid item>
+          <Link to="/viewprofile" className={classes.LinkColor}>
+            <Button
+              id="btnSubmit"
+              variant="contained"
+              type="submit"
+              className={classes.submitButton}
+              onClick={submitHandler}
+            >
+              Submit
+            </Button>
+          </Link>
+        </Grid>
         </Grid>
       </Paper>
     </>
   );
 }
 
-export default ViewProflie;
+// export default ViewProflie;
+
+const mapStateToProps = (state) => {
+  return {
+    getprofile: state.jobs.getprofile,
+  };
+};
+const mapDispatchToProps = (dispatch) => {
+  return bindActionCreators(
+    {
+      getProfile: (id) => getProfile(id),
+      // updateJobs: (data) => updateJobs(data),
+    },
+    dispatch
+  );
+};
+export default connect(mapStateToProps, mapDispatchToProps)(ViewProflie);

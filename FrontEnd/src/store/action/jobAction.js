@@ -29,11 +29,28 @@ export function getJobsById(id) {
   };
 }
 
+export function getProfile(id) {
+  return async (dispatch) => {
+    try {
+      console.log("GET PROFILE ACTION :::");
+      let res = await axios.get(`http://localhost:5000/users/register/${id}`);
+      console.log("IDD :::", id);
+      return dispatch({
+        type: "GET_PROFILE",
+        payload: res,
+      });
+    } catch (err) {
+      return err;
+    }
+  };
+}
+
 export function addAllJobs(data) {
   return async (dispatch) => {
     try {
+      console.log("Add Job:::");
       let res = await axios.post("http://localhost:5000/recruiter/job", data);
-      console.log(res);
+      console.log("Add Job:::", res);
       return dispatch({
         type: "ADD_JOB",
         payload: res,
@@ -44,18 +61,18 @@ export function addAllJobs(data) {
   };
 }
 
-export function updateJobs({ title, skill, jobType, salary, position, id }) {
+export function updateJobs({ companyname, title, skill, jobType, salary, position, id }) {
   // console.log(title, skill, jobType, salary, position, id );
   return async (dispatch) => {
     try {
-      let res = await axios.patch(
-        `http://localhost:5000/recruiter/job/${id}`,
-      {  title,
+      let res = await axios.patch(`http://localhost:5000/recruiter/job/${id}`, {
+        companyname,
+        title,
         skill,
         jobType,
         salary,
-        position}
-      );
+        position,
+      });
       console.log("UPDATE_JOB_____", res);
       return dispatch({
         type: "UPDATE_JOB",
@@ -81,3 +98,20 @@ export function deleteJobs(id) {
     }
   };
 }
+
+// Applicant
+
+// export function applicantJob() {
+//   return async (dispatch) => {
+//     try {
+//       let res = await axios.get("http://localhost:5000/recruiter/job");
+//         console.log(res);
+//       return dispatch({
+//         type: "APPLICANT_JOB",
+//         payload: res,
+//       });
+//     } catch (err) {
+//       return err;
+//     }
+//   };
+// }

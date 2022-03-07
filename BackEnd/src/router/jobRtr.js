@@ -4,12 +4,17 @@ const mongoose = require("mongoose");
 // const auth = require('../middelware/auth');
 const jobModel = require("../models/jobMdl");
 
+const upload = require("../middelware/upload");
+
 const routerJob = new express.Router();
 
 // -- Create Job-- //
 
-routerJob.post("/recruiter/job", async (req, res) => {
+routerJob.post("/recruiter/job",
+  // upload.single("Image"),
+  async (req, res) => {
   try {
+    // req.body.Image = req.file.path;
     job = new jobModel(req.body);
     await job.save();
 

@@ -109,13 +109,13 @@ const Login = (props) => {
     password: '',
   });
 
-  const inputHandler = (key, value) => {
-    // e.preventDefault();
-    setData({
-      ...data,
-      [key]: value,
-    });
-  };
+  // const inputHandler = (key, value) => {
+  //   // e.preventDefault();
+  //   setData({
+  //     ...data,
+  //     [key]: value,
+  //   });
+  // };
   //setData({ ...data, [input.name]: input.value });
 
   const submitHandler = () => {
@@ -124,18 +124,24 @@ const Login = (props) => {
     // console.log(e.target.value);
     // setJobType();
 
+    localStorage.setItem('Email', JSON.stringify(data.email));
+    localStorage.setItem('Password', JSON.stringify(data.password));
+
+    // localStorage.getItem('Token', JSON.stringify(data.token));
+  
+
     const url = 'http://localhost:5000/users/login';
 
     axios
       .post(url, { email: data.email, password: data.password })
       .then((res) => {
         console.log(res.data);
-        let t = localStorage.setItem('token', res.data.token);
-        console.log('token' + t);
-        localStorage.setItem('type', res.data.type);
-        setLoggedin(isAuth());
-        console.log('Logged in successfully');
-        console.log(res);
+        // let t = localStorage.setItem('token', res.data.token);
+        // console.log('token' + t);
+        // localStorage.getItem('type', res.data.type);
+        // setLoggedin(isAuth());
+        // console.log('Logged in successfully');
+        // console.log(res);
       })
       .catch((e) => {
         console.log('Error' + e);
@@ -190,7 +196,7 @@ const Login = (props) => {
             label="Email"
             className={classes.inputBox}
             value={data.email}
-            onChange={(event) => inputHandler('email', event.target.value)}
+            onChange={(event) => setData({...data,email: event.target.value})}
           />
         </Grid>
         <Grid item>
@@ -200,7 +206,7 @@ const Login = (props) => {
             label="Password"
             className={classes.inputBox}
             value={data.password}
-            onChange={(event) => inputHandler('password', event.target.value)}
+            onChange={(event) => setData({...data,password: event.target.value})}
           />
         </Grid>
         <Grid item>

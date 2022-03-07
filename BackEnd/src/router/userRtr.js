@@ -110,6 +110,24 @@ routerUser.get('/users/register', async (req, res) => {
   }
 });
 
+// -- Read User Registration By Id-- //
+
+routerUser.get('/users/register/:id', async (req, res) => {
+  try {
+    const userId = req.params.id;
+    // console.log(userId);
+    const getUserById = await userModel.findById(userId);
+    // console.log(getUserById);
+    if (!getUserById) {
+      return res.status(404).send('User Not Found');
+    } else {
+      res.status(201).send(getUserById);
+    }
+  } catch (e) {
+    res.status(400).send('Error' + e);
+  }
+});
+
 // -- Read User Registration By Name-- //
 
 routerUser.get('/users/register/:name', async (req, res) => {

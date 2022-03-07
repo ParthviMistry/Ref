@@ -2,6 +2,17 @@ const mongoose = require('mongoose');
 
 const JobModel = new mongoose.Schema(
   {
+    companyname: {
+      type: String,
+      required: true,
+      trim: true,
+      lowercase: true,
+    },
+    // Image: {
+    //   type: String,
+    //   // required: true,
+    //   trim: true,
+    // },
     title: {
       type: String,
       required: true,

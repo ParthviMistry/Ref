@@ -11,9 +11,12 @@ import {
   Select,
   MenuItem,
   InputLabel,
+  IconButton,
 } from "@material-ui/core";
 
-import axios from "axios";
+import PhotoCamera from "@mui/icons-material/PhotoCamera";
+import Stack from "@mui/material/Stack";
+import { styled } from "@mui/material/styles";
 
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
@@ -22,8 +25,9 @@ import { updateJobs } from "../../store/action/jobAction";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 
-import Navbar from "../Navbar";
+import RecruiterNavbar from "./RecruiterNavbar";
 import { getJobsById } from "../../store/action/jobAction";
+
 const useStyles = makeStyles(() => ({
   body: {
     padding: "60px 60px",
@@ -45,6 +49,10 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
+const Input = styled("input")({
+  display: "none",
+});
+
 const EditJob = (props) => {
   const classes = useStyles();
 
@@ -65,6 +73,7 @@ const EditJob = (props) => {
     // jobType: currentJob.jobType,
     // salary: currentJob.salary,
     // position:currentJob.position,
+    companyname:"",
     title: "",
     skill: "",
     jobType: "",
@@ -94,9 +103,12 @@ const EditJob = (props) => {
     getjobid(id);
   }, []);
 
+  // -- Display data in textbox
+
   useEffect(() => {
     if (props?.jobByid) {
       setjobDetail({
+        companyname: props?.jobByid?.data?.companyname,
         title: props?.jobByid?.data?.title,
         skill: props?.jobByid?.data?.skill,
         jobType: props?.jobByid?.data?.jobType,
@@ -113,18 +125,18 @@ const EditJob = (props) => {
   const submitHandler = async (e) => {
     e.preventDefault();
     const data = {
-      title:jobDetail.title,
+      companyname: jobDetail.companyname,
+      title: jobDetail.title,
       skill: jobDetail.skill,
       jobType: jobDetail.jobType,
       salary: jobDetail.salary,
       position: jobDetail.position,
-      id:id
+      id: id,
     };
-    console.log("DATA:::",data);
-    
+    console.log("DATA:::", data);
 
     props?.updateJobs(data);
-
+    history("/myjob");
     // dispatch({ type: "UPDATE_JOB", payload: data });
     // //  toast.success("Updated");
     // history("/myjob");
@@ -155,13 +167,54 @@ const EditJob = (props) => {
   return (
     <Paper elevation={3} className={classes.body}>
       {/* {console.log(jobDetail.jobType.trim())} */}
-      <Navbar />
+      <RecruiterNavbar />
       <Grid container direction="column" spacing={4} alignItems="center">
         <Grid item>
           <Typography variant="h4" component="h2">
             Edit Jobs
           </Typography>
         </Grid>
+
+        <Grid item>
+            <TextField
+              id="companyname"
+              type="text"
+              label="Company Name"
+              className={classes.inputBox}
+              value={jobDetail.companyname}
+            onChange={(event) => {
+              setjobDetail({ ...jobDetail, companyname: event.target.value });
+              }}
+            />
+          </Grid>
+
+          <Stack direction="row" alignItems="center" spacing={2} >
+            <label htmlFor="contained-button-file">
+              <Input
+                accept="image/*"
+                id="contained-button-file"
+                multiple
+                type="file"
+              />
+              <Button variant="contained" component="span">
+                Upload
+              </Button>
+            </label>
+            <label htmlFor="icon-button-file">
+              <Input accept="image/*" id="icon-button-file" type="file" />
+              <IconButton
+                color="primary"
+                aria-label="upload picture"
+                component="span"
+              //   value={jobDetail.Image}
+              // onChange={(event) => {
+              //   setjobDetail({ ...jobDetail, title: event.target.value });
+              // }}
+              >
+                <PhotoCamera />
+              </IconButton>
+            </label>
+          </Stack>
 
         <Grid item>
           <TextField
@@ -171,7 +224,7 @@ const EditJob = (props) => {
             className={classes.inputBox}
             value={jobDetail.title}
             onChange={(event) => {
-             setjobDetail({...jobDetail,title: event.target.value})
+              setjobDetail({ ...jobDetail, title: event.target.value });
             }}
           />
         </Grid>
@@ -184,7 +237,7 @@ const EditJob = (props) => {
             className={classes.inputBox}
             value={jobDetail.skill}
             onChange={(event) => {
-              setjobDetail({...jobDetail,skill: event.target.value})
+              setjobDetail({ ...jobDetail, skill: event.target.value });
             }}
           />
         </Grid>
@@ -196,7 +249,7 @@ const EditJob = (props) => {
               id="jobType"
               value={jobDetail.jobType}
               onChange={(event) => {
-                setjobDetail({...jobDetail,jobType: event.target.value})
+                setjobDetail({ ...jobDetail, jobType: event.target.value });
               }}
             >
               <MenuItem disabled value="">
@@ -216,7 +269,7 @@ const EditJob = (props) => {
             className={classes.inputBox}
             value={jobDetail.salary}
             onChange={(event) => {
-              setjobDetail({...jobDetail,salary: event.target.value})
+              setjobDetail({ ...jobDetail, salary: event.target.value });
             }}
           />
         </Grid>
@@ -229,7 +282,7 @@ const EditJob = (props) => {
             className={classes.inputBox}
             value={jobDetail.position}
             onChange={(event) => {
-              setjobDetail({...jobDetail,position: event.target.value})
+              setjobDetail({ ...jobDetail, position: event.target.value });
             }}
           />
         </Grid>

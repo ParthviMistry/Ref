@@ -11,8 +11,11 @@ import {
   Select,
   MenuItem,
   InputLabel,
+  IconButton,
 } from "@material-ui/core";
-
+import PhotoCamera from "@mui/icons-material/PhotoCamera";
+import Stack from "@mui/material/Stack";
+import { styled } from "@mui/material/styles";
 import { useDispatch, useSelector, connect } from "react-redux";
 import { toast } from "react-toastify";
 import { useNavigate, Link } from "react-router-dom";
@@ -20,7 +23,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { bindActionCreators } from "redux";
 import { addAllJobs } from "../../../store/action/jobAction";
 
-import Navbar from "../../Navbar";
+import RecruiterNavbar from "../RecruiterNavbar";
 
 // makeStyles use for CSS
 
@@ -45,6 +48,10 @@ const useStyles = makeStyles(() => ({
     color: "white",
   },
 }));
+
+const Input = styled("input")({
+  display: "none",
+});
 
 const AddJob = (props) => {
   const classes = useStyles();
@@ -81,6 +88,8 @@ const AddJob = (props) => {
   // ];
 
   const [jobDetail, setjobDetail] = useState({
+    companyname: "",
+    Image: "",
     title: "",
     skill: "",
     jobType: "",
@@ -104,6 +113,8 @@ const AddJob = (props) => {
     // );
 
     if (
+      !jobDetail.companyname ||
+      // !jobDetail.Image ||
       !jobDetail.title ||
       !jobDetail.skill ||
       !jobDetail.jobType ||
@@ -171,7 +182,7 @@ const AddJob = (props) => {
       {/* {console.log(props?.job?.data)} */}
       {/* // Paper use as container , elevation - for shadow */}(
       <Paper elevation={3} className={classes.body}>
-        <Navbar />
+        <RecruiterNavbar />
         <Grid container direction="column" spacing={4} alignItems="center">
           <Grid item>
             {/*  Typography use for size or different heading tag */}
@@ -180,6 +191,47 @@ const AddJob = (props) => {
             </Typography>
           </Grid>
 
+          <Grid item>
+            <TextField
+              id="companyname"
+              type="text"
+              label="Company Name"
+              className={classes.inputBox}
+              value={jobDetail.companyname}
+              onChange={(event) => {
+                inputHandler("companyname", event.target.value);
+              }}
+            />
+          </Grid>
+
+          <Stack direction="row" alignItems="center" spacing={2} >
+            <label htmlFor="contained-button-file">
+              <Input
+                accept="image/*"
+                id="contained-button-file"
+                multiple
+                type="file"
+              />
+              <Button variant="contained" component="span">
+                Upload
+              </Button>
+            </label>
+            <label htmlFor="icon-button-file">
+              <Input accept="image/*" id="icon-button-file" type="file" />
+              <IconButton
+                color="primary"
+                aria-label="upload picture"
+                component="span"
+                value={jobDetail.Image}
+              onChange={(event) => {
+                inputHandler("Image", event.target.value);
+              }}
+              >
+                <PhotoCamera />
+              </IconButton>
+            </label>
+          </Stack>
+          
           <Grid item>
             <TextField
               id="title"

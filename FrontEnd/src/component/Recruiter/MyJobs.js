@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
-import Navbar from "../Navbar";
+
+import RecruiterNavbar from "./RecruiterNavbar";
 import DeleteJob from "./DeleteJob";
 import EditJob from "./EditJob";
+
 import {
   getAllJobs,
   deleteJobs,
   getJobsById,
 } from "../../store/action/jobAction";
+
 import { styled } from "@mui/material/styles";
 import {
   Grid,
@@ -104,14 +107,14 @@ const MyJobs = (props) => {
     // getJobs()
   };
 
-  const editHandler = async (id) => {
-    // history(`/editjob/${job._id}`);
-    console.log(id);
+  // const editHandler = async (id) => {
+  //   // history(`/editjob/${job._id}`);
+  //   console.log(id);
 
-    // dispatch({ type: "UPDATE_JOB", payload: id });
-    // console.log("Updated!!")
-    // toast.success("Deleted")
-  };
+  //   // dispatch({ type: "UPDATE_JOB", payload: id });
+  //   // console.log("Updated!!")
+  //   // toast.success("Deleted")
+  // };
   const [open, setOpen] = React.useState({ dialog: false, id: "" });
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
@@ -140,6 +143,7 @@ const MyJobs = (props) => {
     getJobs();
     console.log("Delete Succesfully", id);
   };
+  
   const getJobs = async () => {
     await props?.getAllJobs();
   };
@@ -149,8 +153,8 @@ const MyJobs = (props) => {
 
   return (
     <>
-      {console.log(props?.job?.data)}
-      <Navbar />
+      {/* {console.log(props?.job?.data)} */}
+      <RecruiterNavbar />
       <div className={classes.tableBody}>
         <Grid container direction="column" spacing={4} alignItems="center">
           <Grid item>
@@ -175,6 +179,8 @@ const MyJobs = (props) => {
             <TableHead>
               <TableRow>
                 <StyledTableCell>Sr. No </StyledTableCell>
+                <StyledTableCell>Company Name</StyledTableCell>
+                <StyledTableCell>Logo</StyledTableCell>
                 <StyledTableCell>Title</StyledTableCell>
                 <StyledTableCell>Skills</StyledTableCell>
                 <StyledTableCell>Salary</StyledTableCell>
@@ -191,6 +197,8 @@ const MyJobs = (props) => {
                     <StyledTableCell component="th" scope="row">
                       {id + 1}
                     </StyledTableCell>
+                    <StyledTableCell>{job.companyname}</StyledTableCell>
+                    <StyledTableCell>{job.Image}</StyledTableCell>
                     <StyledTableCell>{job.title}</StyledTableCell>
                     <StyledTableCell>{job.skill}</StyledTableCell>
                     <StyledTableCell>{job.salary}</StyledTableCell>
@@ -247,11 +255,13 @@ const MyJobs = (props) => {
     </>
   );
 };
+
 const mapStateToProps = (state) => {
   return {
     job: state.jobs.alljob,
   };
 };
+
 const mapDispatchToProps = (dispatch) => {
   return bindActionCreators(
     {
@@ -261,4 +271,5 @@ const mapDispatchToProps = (dispatch) => {
     dispatch
   );
 };
+
 export default connect(mapStateToProps, mapDispatchToProps)(MyJobs);

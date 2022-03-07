@@ -1,10 +1,12 @@
-let initialOfferList = {
+let initialList = {
   alljob: {},
   jobByid: {},
   editjob: {},
   deletejob: {},
+  getprofile: {},
+  applicantjob: {}
 };
-const jobReducer = (state = initialOfferList, action) => {
+const jobReducer = (state = initialList, action) => {
   switch (action.type) {
     case "ADD_JOB":
       state = [...state, action.payload];
@@ -22,6 +24,12 @@ const jobReducer = (state = initialOfferList, action) => {
         jobByid: action.payload,
       };
     }
+    case "GET_PROFILE": {
+      return {
+        ...state,
+        getprofile: action.payload,
+      };
+    }
     case "UPDATE_JOB": {
       return {
         ...state,
@@ -34,6 +42,12 @@ const jobReducer = (state = initialOfferList, action) => {
         deletejob: action.payload,
       };
     }
+    // case "APPLICANT_JOB": {
+    //   return {
+    //     ...state,
+    //     applicantjob: action.payload,
+    //   };
+    // }
     default: {
       return state;
     }

@@ -11,7 +11,8 @@ import EditJob from './component/Recruiter/EditJob';
 import DeleteJob from './component/Recruiter/DeleteJob';
 import Home from './component/Home';
 import ViewProflie from './component/Recruiter/ViewProflie';
-
+import ViewJob from './component/Applicant/ViewJob';
+import ApplicantHome from './component/Applicant/Home';
 function App() {
   const user = localStorage.getItem('token');
   return (
@@ -36,8 +37,13 @@ function App() {
 
         <Route path="/deletejob" element={<DeleteJob />} exact />
 
-        <Route path="/viewprofile" element={<ViewProflie />} exact />
+        <Route path="/viewprofile/:id" element={<ViewProflie />} exact />
         
+        {/* Applicant Route */}
+
+        <Route path="/viewjob" element={<ViewJob />} exact />
+
+        <Route path="/applicanthome" element={<ApplicantHome />} exact />
       </Routes>
       <ToastContainer />
     </>
